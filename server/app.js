@@ -2,8 +2,10 @@ import http from "node:http";
 import { open, readdir } from "fs/promises";
 import { readFile } from "node:fs/promises";
 import mime from 'mime-types'
+import { json } from "node:stream/consumers";
 
 const server = http.createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin',"*")
   if(req.url === '/favicon.ico') return res.end('no favicon')
   console.log(req.url);
   
@@ -13,7 +15,7 @@ const server = http.createServer(async (req, res) => {
     try {
         const [url,queryString] = req.url.split('?')
       const queryParams = {}
-      queryString.split('&').forEach((pair) =>{
+      queryString?.split('&').forEach((pair) =>{
         const [key,value] = pair.split('=')
         queryParams[key] = value;
       })
@@ -39,15 +41,18 @@ const server = http.createServer(async (req, res) => {
 });
 
 async function serveDir(req,res){
+  res.setHeader('Access-Control-Allow-Origin',"*")
   const [url,queryString] = req.url.split('?')
-  const files = await readdir(`./storage${req.url}`);
-  let dynamicHTML = "";
-  const html = await readFile("./index.html", "utf-8");
-  files.forEach((item) => {
-    dynamicHTML += `${item}<a href="${req.url === '/' ? "": req.url}/${item}?action=open">Open</a><a href="${req.url === '/' ? "": req.url}/${item}?action=download">Download</a><br>`;
+  const files = await readdir(`./storage${url}`);
+  res.setHeader('Content-Type',"application/json")
+  // let dynamicHTML = "";
+  // const html = await readFile("./index.html", "utf-8");
+  // files.forEach((item) => {
+  //   dynamicHTML += `${item}<a href="${req.url === '/' ? "": req.url}/${item}?action=open">Open</a><a href="${req.url === '/' ? "": req.url}/${item}?action=download">Download</a><br>`;
 
-  })
-  res.end(html.replace('${dynamicHTML}',dynamicHTML))
+  // })
+  // res.end(html.replace('${dynamicHTML}',dynamicHTML))
+  res.end(JSON.stringify(files))
 
 }
 
