@@ -38,6 +38,9 @@ function App() {
         <div key={i}>
           {item} <a href={`http://192.168.0.198/${item}?action=open`}>Open</a>{" "}
           <a href={`http://192.168.0.198/${item}?action=download`}>Download</a>
+          <button>Rename</button>
+          <button>Delete</button>
+
           <br />
         </div>
       ))}
