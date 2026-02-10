@@ -6,7 +6,7 @@ function App() {
   const [progress, setProgress] = useState(0);
 
   async function getDirectoryItems() {
-    const response = await fetch("http://192.168.0.198/");
+    const response = await fetch("http://192.168.0.197/");
   
     const data = await response.json();
     setDirectoryItems(data);
@@ -23,11 +23,23 @@ function App() {
     xhr.addEventListener("load", () => {
       console.log(xhr.response);
     });
+
     xhr.upload.addEventListener("progress", (e) => {
       const totalProgress = (e.loaded / e.total) * 100;
       setProgress(totalProgress.toFixed(2));
     });
     xhr.send(file);
+  }
+  async function handleDelete(filename) {
+    console.log(filename);
+    
+    const response = await fetch('http://192.168.0.197/delete',{
+      method : "DELETE",
+      body : filename
+    })
+    const data = await response.text();
+    console.log(data);
+    
   }
   return (
     <>
@@ -36,10 +48,10 @@ function App() {
       <p>Progress: {progress}%</p>
       {directoryItems.map((item, i) => (
         <div key={i}>
-          {item} <a href={`http://192.168.0.198/${item}?action=open`}>Open</a>{" "}
-          <a href={`http://192.168.0.198/${item}?action=download`}>Download</a>
+          {item} <a href={`http://192.168.0.197/${item}?action=open`}>Open</a>{" "}
+          <a href={`http://192.168.0.197/${item}?action=download`}>Download</a>
           <button>Rename</button>
-          <button>Delete</button>
+          <button onClick={handleDelete(item)}>Delete</button>
 
           <br />
         </div>
